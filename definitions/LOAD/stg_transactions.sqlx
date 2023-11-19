@@ -1,0 +1,25 @@
+config {
+  hasOutput: true,
+  type: "operations",
+  schema: dataform.projectConfig.vars.RAW_DATA,
+  tags: ["LOAD_DATA"]
+}
+
+
+LOAD DATA OVERWRITE ${ self() }
+(
+    t_dat                              STRING    NOT NULL
+  , customer_id                        STRING
+  , article_id                         STRING
+  , price                              STRING
+  , sales_channel_id                   STRING
+)
+FROM FILES (
+  format = "CSV",
+  field_delimiter = ",",
+  skip_leading_rows = 1,
+  allow_jagged_rows = true,
+  quote = "\"",
+  null_marker = "",
+  uris = ["gs://${ dataform.projectConfig.vars.LOAD_GCS_BUCKET }/transactions_train.csv"]
+);

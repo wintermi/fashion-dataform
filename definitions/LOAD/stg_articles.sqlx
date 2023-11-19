@@ -1,0 +1,45 @@
+config {
+  hasOutput: true,
+  type: "operations",
+  schema: dataform.projectConfig.vars.RAW_DATA,
+  tags: ["LOAD_DATA"]
+}
+
+
+LOAD DATA OVERWRITE ${ self() }
+(
+    article_id                         STRING    NOT NULL
+  , product_code                       STRING
+  , prod_name                          STRING
+  , product_type_no                    STRING
+  , product_type_name                  STRING
+  , product_group_name                 STRING
+  , graphical_appearance_no            STRING
+  , graphical_appearance_name          STRING
+  , colour_group_code                  STRING
+  , colour_group_name                  STRING
+  , perceived_colour_value_id          STRING
+  , perceived_colour_value_name        STRING
+  , perceived_colour_master_id         STRING
+  , perceived_colour_master_name       STRING
+  , department_no                      STRING
+  , department_name                    STRING
+  , index_code                         STRING
+  , index_name                         STRING
+  , index_group_no                     STRING
+  , index_group_name                   STRING
+  , section_no                         STRING
+  , section_name                       STRING
+  , garment_group_no                   STRING
+  , garment_group_name                 STRING
+  , detail_desc                        STRING
+)
+FROM FILES (
+  format = "CSV",
+  field_delimiter = ",",
+  skip_leading_rows = 1,
+  allow_jagged_rows = true,
+  quote = "\"",
+  null_marker = "",
+  uris = ["gs://${ dataform.projectConfig.vars.LOAD_GCS_BUCKET }/articles.csv"]
+);
