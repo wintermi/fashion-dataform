@@ -1,0 +1,39 @@
+config {
+  type: "table",
+  schema: dataform.projectConfig.vars.BASE_DATA,
+  description: "Contains the detailed metadata for each `article_id` available for purchase",
+  dependencies: [ "stg_articles_uniqueKey"],
+  assertions: {
+    uniqueKey: ["article_id"]
+  },
+  tags: ["TRANSFORM_DATA"]
+}
+
+
+SELECT
+    article_id
+  , product_code
+  , prod_name
+  , CAST(product_type_no AS INT64) AS product_type_no
+  , product_type_name
+  , product_group_name
+  , CAST(graphical_appearance_no AS INT64) AS graphical_appearance_no
+  , graphical_appearance_name
+  , colour_group_code
+  , colour_group_name
+  , CAST(perceived_colour_value_id AS INT64) AS perceived_colour_value_id
+  , perceived_colour_value_name
+  , CAST(perceived_colour_master_id AS INT64) AS perceived_colour_master_id
+  , perceived_colour_master_name
+  , CAST(department_no AS INT64) AS department_no
+  , department_name
+  , index_code
+  , index_name
+  , CAST(index_group_no AS INT64) AS index_group_no
+  , index_group_name
+  , CAST(section_no AS INT64) AS section_no
+  , section_name
+  , CAST(garment_group_no AS INT64) AS garment_group_no
+  , garment_group_name
+  , detail_desc
+FROM ${ ref({ schema: dataform.projectConfig.vars.RAW_DATA, name: "stg_articles" }) }

@@ -1,0 +1,15 @@
+config {
+  type: "table",
+  schema: dataform.projectConfig.vars.BASE_DATA,
+  description: "Contains the purchases for each customer for each date, as well as additional information. Duplicate rows correspond to multiple purchases of the same item.",
+  tags: ["TRANSFORM_DATA"]
+}
+
+
+SELECT
+    CAST(t_dat AS DATE) AS t_dat
+  , customer_id
+  , article_id
+  , CAST(price AS FLOAT64) AS price
+  , CAST(sales_channel_id AS INT64) AS sales_channel_id
+FROM ${ ref({ schema: dataform.projectConfig.vars.RAW_DATA, name: "stg_transactions" }) }
