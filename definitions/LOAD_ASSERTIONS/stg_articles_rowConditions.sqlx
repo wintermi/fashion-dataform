@@ -1,0 +1,11 @@
+config {
+  type: "assertion",
+  tags: ["LOAD_ASSERTIONS"]
+}
+
+
+SELECT
+    'article_id IS NOT NULL' AS failing_row_condition
+  , *
+FROM ${ ref({ schema: dataform.projectConfig.vars.RAW_DATA, name: "stg_articles" }) }
+WHERE NOT (article_id IS NOT NULL)

@@ -1,0 +1,23 @@
+config {
+  type: "assertion",
+  tags: ["LOAD_ASSERTIONS"]
+}
+
+
+SELECT
+    't_dat IS NOT NULL' AS failing_row_condition
+  , *
+FROM ${ ref({ schema: dataform.projectConfig.vars.RAW_DATA, name: "stg_transactions" }) }
+WHERE NOT (t_dat IS NOT NULL)
+UNION ALL
+SELECT
+    'customer_id IS NOT NULL' AS failing_row_condition
+  , *
+FROM ${ ref({ schema: dataform.projectConfig.vars.RAW_DATA, name: "stg_transactions" }) }
+WHERE NOT (customer_id IS NOT NULL)
+UNION ALL
+SELECT
+    'article_id IS NOT NULL' AS failing_row_condition
+  , *
+FROM ${ ref({ schema: dataform.projectConfig.vars.RAW_DATA, name: "stg_transactions" }) }
+WHERE NOT (article_id IS NOT NULL)

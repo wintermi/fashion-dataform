@@ -2,7 +2,7 @@ config {
   type: "table",
   schema: dataform.projectConfig.vars.BASE_DATA,
   description: "Contains the detailed metadata for each `article_id` available for purchase",
-  dependencies: [ "stg_articles_uniqueKey"],
+  dependencies: ["stg_articles_uniqueKey", "stg_articles_rowConditions"],
   assertions: {
     uniqueKey: ["article_id"],
     nonNull: ["article_id"]

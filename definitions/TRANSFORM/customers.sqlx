@@ -2,7 +2,7 @@ config {
   type: "table",
   schema: dataform.projectConfig.vars.BASE_DATA,
   description: "Contains metadata for each `customer_id` in the dataset",
-  dependencies: [ "stg_customers_uniqueKey"],
+  dependencies: ["stg_customers_uniqueKey", "stg_customers_rowConditions"],
   assertions: {
     uniqueKey: ["customer_id"],
     nonNull: ["customer_id"]

@@ -2,6 +2,7 @@ config {
   type: "table",
   schema: dataform.projectConfig.vars.BASE_DATA,
   description: "Contains the purchases for each customer for each date, as well as additional information. Duplicate rows correspond to multiple purchases of the same item.",
+  dependencies: ["stg_transactions_rowConditions"],
   assertions: {
     nonNull: ["t_dat", "customer_id", "article_id"]
   },
