@@ -4,7 +4,8 @@ config {
   description: "Contains the detailed metadata for each `article_id` available for purchase",
   dependencies: [ "stg_articles_uniqueKey"],
   assertions: {
-    uniqueKey: ["article_id"]
+    uniqueKey: ["article_id"],
+    nonNull: ["article_id"]
   },
   tags: ["TRANSFORM_DATA"]
 }

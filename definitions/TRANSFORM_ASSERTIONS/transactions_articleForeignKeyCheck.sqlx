@@ -1,0 +1,14 @@
+config {
+  type: "assertion",
+  tags: ["TRANSFORM_ASSERTIONS"]
+}
+
+
+SELECT
+    t.article_id
+  , COUNT(*) AS index_row_count
+FROM ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "transactions" }) } AS t
+  LEFT OUTER JOIN ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "articles" }) } AS a
+    ON  t.article_id = a.article_id
+WHERE a.article_id IS NULL
+GROUP BY 1
