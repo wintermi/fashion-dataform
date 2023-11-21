@@ -18,9 +18,9 @@ CREATE OR REPLACE TABLE ${ self() }
 OPTIONS(description="The Retail API Product Catalog is a collection of Product objects and associated metadata")
 AS
 SELECT
-    article_id AS id
+    product_code AS id
   , CAST("PRIMARY" AS STRING) AS type
-  , article_id AS primaryProductId
+  , product_code AS primaryProductId
   , prod_name AS title
-  , [ product_group_name ] AS categories
-FROM ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "articles" }) }
+  , [ product_category ] AS categories
+FROM ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "retail_product_category" }) }
