@@ -25,7 +25,6 @@ RETAIL_TMP_DIR="${RETAIL_TMP_DIR:A}"
 cat <<EOF > "$RETAIL_TMP_DIR/import_product_catalog_request.json"
 {
   "reconciliationMode": "FULL",
-  "skip_default_branch_protection": true,
   "inputConfig": {
     "bigQuerySource": {
       "projectId": "${RETAIL_PROJECT_ID}",
