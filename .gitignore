@@ -36,5 +36,5 @@ dataform-*.json
 *.old
 
 # Project Excludes
-data/*
-!data/.gitkeep
+tmp/*
+!tmp/.gitkeep
