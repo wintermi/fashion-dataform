@@ -1,6 +1,6 @@
 config {
   type: "assertion",
-  tags: ["LOAD_ASSERTIONS"]
+  tags: ["LOAD_ASSERTIONS", "LOAD_DATA"]
 }
 
 
