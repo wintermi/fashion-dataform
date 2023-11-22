@@ -1,6 +1,6 @@
 config {
   type: "assertion",
-  tags: ["TRANSFORM_ASSERTIONS"]
+  tags: ["TRANSFORM_ASSERTIONS", "TRANSFORM_DATA"]
 }
 
 
