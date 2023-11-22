@@ -6,7 +6,7 @@ config {
     uniqueKey: ["product_code"],
     nonNull: ["product_code"]
   },
-  tags: ["TRANSFORM_RETAIL_DATA"]
+  tags: ["TRANSFORM_DATA"]
 }
 
 
@@ -32,13 +32,13 @@ SELECT
 FROM (SELECT
           product_code
         , REGEXP_REPLACE(INITCAP(prod_name), r'\([^)]*\)', "") AS prod_name
-        , REPLACE(INITCAP(product_group_name), ">", "-") AS product_group_name
-        , REPLACE(INITCAP(product_type_name), ">", "-") AS product_type_name
-        , REPLACE(INITCAP(index_group_name), ">", "-") AS index_group_name
-        , REPLACE(INITCAP(index_name), ">", "-") AS index_name
-        , REPLACE(INITCAP(section_name), ">", "-") AS section_name
-        , REPLACE(INITCAP(garment_group_name), ">", "-") AS garment_group_name
+        , REPLACE(REPLACE(INITCAP(product_group_name), ">", "-"), " And ", " & ") AS product_group_name
+        , REPLACE(REPLACE(INITCAP(product_type_name), ">", "-"), " And ", " & ") AS product_type_name
+        , REPLACE(REPLACE(INITCAP(index_group_name), ">", "-"), " And ", " & ") AS index_group_name
+        , REPLACE(REPLACE(INITCAP(index_name), ">", "-"), " And ", " & ") AS index_name
+        , REPLACE(REPLACE(INITCAP(section_name), ">", "-"), " And ", " & ") AS section_name
+        , REPLACE(REPLACE(INITCAP(garment_group_name), ">", "-"), " And ", " & ") AS garment_group_name
         , detail_desc
-      FROM ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "articles" }) }
+      FROM ${ ref({ schema: dataform.projectConfig.vars.RAW_DATA, name: "stg_articles" }) }
       QUALIFY ROW_NUMBER() OVER (PARTITION BY product_code
                                  ORDER BY article_id DESC) = 1) AS dt

@@ -16,8 +16,8 @@ SELECT
   , product_code
   , prod_name
   , CAST(product_type_no AS INT64) AS product_type_no
-  , product_type_name
   , product_group_name
+  , product_type_name
   , CAST(graphical_appearance_no AS INT64) AS graphical_appearance_no
   , graphical_appearance_name
   , colour_group_code
@@ -28,10 +28,10 @@ SELECT
   , perceived_colour_master_name
   , CAST(department_no AS INT64) AS department_no
   , department_name
-  , index_code
-  , index_name
   , CAST(index_group_no AS INT64) AS index_group_no
   , index_group_name
+  , index_code
+  , index_name
   , CAST(section_no AS INT64) AS section_no
   , section_name
   , CAST(garment_group_no AS INT64) AS garment_group_no
