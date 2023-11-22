@@ -4,16 +4,20 @@ config {
   description: "Contains the purchases for each customer for each date, as well as additional information. Duplicate rows correspond to multiple purchases of the same item.",
   dependencies: ["stg_transactions_rowConditions"],
   assertions: {
-    nonNull: ["t_dat", "customer_id", "article_id"]
+    nonNull: ["transaction_date", "customer_id", "article_id"]
   },
   tags: ["TRANSFORM_DATA"]
 }
 
 
 SELECT
-    CAST(t_dat AS DATE) AS t_dat
+    DATE_ADD(CAST(t_dat AS DATE), INTERVAL ltd.days_since DAY) AS transaction_date
   , customer_id
   , article_id
   , ROUND(PARSE_NUMERIC(price) * 708.0236010385, 2) AS price
   , CAST(sales_channel_id AS INT64) AS sales_channel_id
 FROM ${ ref({ schema: dataform.projectConfig.vars.RAW_DATA, name: "stg_transactions" }) }
+  CROSS JOIN (SELECT
+                  MAX(CAST(t_dat AS DATE)) AS last_transaction_date
+                , DATE_DIFF(CURRENT_DATE, MAX(CAST(t_dat AS DATE)), DAY) days_since
+              FROM ${ ref({ schema: dataform.projectConfig.vars.RAW_DATA, name: "stg_transactions" }) }) AS ltd
