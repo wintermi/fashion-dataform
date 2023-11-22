@@ -6,8 +6,7 @@ config {
 
 SELECT
     id
-  , type
   , COUNT(*) AS index_row_count
 FROM ${ ref({ schema: dataform.projectConfig.vars.RAWBASE_DATA_DATA, name: "retail_product_catalog" }) }
-GROUP BY 1, 2
+GROUP BY 1
 HAVING index_row_count > 1
