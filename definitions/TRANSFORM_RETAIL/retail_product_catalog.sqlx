@@ -23,6 +23,7 @@ CREATE OR REPLACE TABLE ${ self() }
         , originalPrice      FLOAT64
       >
   , availability             STRING
+  , uri                      STRING
 )
 OPTIONS(description="The Retail API Product Catalog is a collection of Product objects and associated metadata")
 AS
@@ -36,12 +37,13 @@ SELECT
   , "en" AS languageCode
   , IF(ppi.product_code IS NULL, NULL, STRUCT(ppi.currencyCode, ppi.current_price AS price, ppi.max_price as originalPrice)) AS priceInfo
   , IF(ppi.product_code IS NULL, "OUT_OF_STOCK", "IN_STOCK") AS availability
+  , IF(ppi.product_code IS NULL, NULL, FORMAT("https://www2.hm.com/en_us/search-results.html?q=%s", pc.product_code)) AS uri
 FROM ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "product_category" }) } AS pc
   LEFT OUTER JOIN ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "product_price_info" }) } AS ppi
     ON  pc.product_code = ppi.product_code
 UNION ALL
 SELECT
-    p.article_id AS id
+    a.article_id AS id
   , "VARIANT" AS type
   , pc.product_code AS primaryProductId
   , [ pc.product_category ] AS categories
@@ -50,8 +52,9 @@ SELECT
   , "en" AS languageCode
   , IF(ppi.product_code IS NULL, NULL, STRUCT(ppi.currencyCode, ppi.current_price AS price, ppi.max_price as originalPrice)) AS priceInfo
   , IF(ppi.product_code IS NULL, "OUT_OF_STOCK", "IN_STOCK") AS availability
-FROM ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "articles" }) } AS p
+  , IF(ppi.product_code IS NULL, NULL, FORMAT("https://www2.hm.com/en_us/productpage.%s.html", a.article_id)) AS uri
+FROM ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "articles" }) } AS a
   INNER JOIN ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "product_category" }) } AS pc
-    ON  p.product_code = pc.product_code
+    ON  a.product_code = pc.product_code
   LEFT OUTER JOIN ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "product_price_info" }) } AS ppi
-    ON  p.product_code = ppi.product_code
+    ON  a.product_code = ppi.product_code
