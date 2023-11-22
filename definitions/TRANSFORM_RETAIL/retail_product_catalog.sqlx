@@ -16,27 +16,42 @@ CREATE OR REPLACE TABLE ${ self() }
   , title                    STRING              NOT NULL
   , description              STRING
   , languageCode             STRING
+  , priceInfo                STRUCT
+      <
+          currencyCode       STRING
+        , price              FLOAT64
+        , originalPrice      FLOAT64
+      >
+  , availability             STRING
 )
 OPTIONS(description="The Retail API Product Catalog is a collection of Product objects and associated metadata")
 AS
 SELECT
-    product_code AS id
+    pc.product_code AS id
   , "PRIMARY" AS type
-  , product_code AS primaryProductId
+  , pc.product_code AS primaryProductId
   , [ product_category ] AS categories
-  , prod_name AS title
-  , detail_desc AS description
+  , pc.prod_name AS title
+  , pc.detail_desc AS description
   , "en" AS languageCode
-FROM ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "product_category" }) }
+  , IF(ppi.product_code IS NULL, NULL, STRUCT(ppi.currencyCode, ppi.current_price AS price, ppi.max_price as originalPrice)) AS priceInfo
+  , IF(ppi.product_code IS NULL, "OUT_OF_STOCK", "IN_STOCK") AS availability
+FROM ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "product_category" }) } AS pc
+  LEFT OUTER JOIN ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "product_price_info" }) } AS ppi
+    ON  pc.product_code = ppi.product_code
 UNION ALL
 SELECT
-    prod.article_id AS id
+    p.article_id AS id
   , "VARIANT" AS type
-  , cat.product_code AS primaryProductId
-  , [ cat.product_category ] AS categories
-  , cat.prod_name AS title
-  , cat.detail_desc AS description
+  , pc.product_code AS primaryProductId
+  , [ pc.product_category ] AS categories
+  , pc.prod_name AS title
+  , pc.detail_desc AS description
   , "en" AS languageCode
-FROM ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "articles" }) } AS prod
-  INNER JOIN ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "product_category" }) } AS cat
-    ON  prod.product_code = cat.product_code
+  , IF(ppi.product_code IS NULL, NULL, STRUCT(ppi.currencyCode, ppi.current_price AS price, ppi.max_price as originalPrice)) AS priceInfo
+  , IF(ppi.product_code IS NULL, "OUT_OF_STOCK", "IN_STOCK") AS availability
+FROM ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "articles" }) } AS p
+  INNER JOIN ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "product_category" }) } AS pc
+    ON  p.product_code = pc.product_code
+  LEFT OUTER JOIN ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "product_price_info" }) } AS ppi
+    ON  p.product_code = ppi.product_code

@@ -1,0 +1,13 @@
+config {
+  type: "assertion",
+  tags: ["TRANSFORM_RETAIL_DATA"]
+}
+
+
+SELECT
+    id
+  , type
+  , COUNT(*) AS index_row_count
+FROM ${ ref({ schema: dataform.projectConfig.vars.RAWBASE_DATA_DATA, name: "retail_product_catalog" }) }
+GROUP BY 1, 2
+HAVING index_row_count > 1
