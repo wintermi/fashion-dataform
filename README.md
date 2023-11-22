@@ -62,6 +62,7 @@ The ```dataform.json``` contains the following parameters
 - ```LOAD_GCS_BUCKET```: Name of the Google Cloud Storage Bucket, which you previously took note of
 - ```RAW_DATA```: Name of the BigQuery Dataset for which the Fashion data files are to be loaded
 - ```BASE_DATA```: Name of the BigQuery Dataset for which the final transformed Fashion tables are to be located
+- ```LAST_DATE```: The date in which you would like the Transaction data to be realigned to
 
 Here is what an example configuration looks like
 ```json
@@ -74,7 +75,8 @@ Here is what an example configuration looks like
   "vars": {
     "LOAD_GCS_BUCKET": "winter-data/fashion",
     "RAW_DATA": "fashion_staging",
-    "BASE_DATA": "fashion"
+    "BASE_DATA": "fashion",
+    "LAST_DATE": "2023-11-22"
   }
 }
 ```
