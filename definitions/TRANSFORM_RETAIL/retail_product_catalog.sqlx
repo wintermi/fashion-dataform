@@ -12,25 +12,31 @@ CREATE OR REPLACE TABLE ${ self() }
     id                       STRING              NOT NULL
   , type                     STRING
   , primaryProductId         STRING
-  , title                    STRING              NOT NULL
   , categories               ARRAY<STRING>
+  , title                    STRING              NOT NULL
+  , description              STRING
+  , languageCode             STRING
 )
 OPTIONS(description="The Retail API Product Catalog is a collection of Product objects and associated metadata")
 AS
 SELECT
     product_code AS id
-  , CAST("PRIMARY" AS STRING) AS type
+  , "PRIMARY" AS type
   , product_code AS primaryProductId
-  , prod_name AS title
   , [ product_category ] AS categories
+  , prod_name AS title
+  , detail_desc AS description
+  , "en" AS languageCode
 FROM ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "retail_product_category" }) }
 UNION ALL
 SELECT
     prod.article_id AS id
-  , CAST("VARIANT" AS STRING) AS type
+  , "VARIANT" AS type
   , cat.product_code AS primaryProductId
-  , cat.prod_name AS title
   , [ cat.product_category ] AS categories
+  , cat.prod_name AS title
+  , cat.detail_desc AS description
+  , "en" AS languageCode
 FROM ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "articles" }) } AS prod
   INNER JOIN ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "retail_product_category" }) } AS cat
     ON  prod.product_code = cat.product_code
