@@ -19,5 +19,5 @@ SELECT
 FROM ${ ref({ schema: dataform.projectConfig.vars.RAW_DATA, name: "stg_transactions" }) }
   CROSS JOIN (SELECT
                   MAX(CAST(t_dat AS DATE)) AS last_transaction_date
-                , DATE_DIFF(CURRENT_DATE, MAX(CAST(t_dat AS DATE)), DAY) days_since
+                , DATE_DIFF(DATE "${ dataform.projectConfig.vars.LAST_DATE }", MAX(CAST(t_dat AS DATE)), DAY) days_since
               FROM ${ ref({ schema: dataform.projectConfig.vars.RAW_DATA, name: "stg_transactions" }) }) AS ltd

@@ -7,6 +7,7 @@
   "vars": {
     "LOAD_GCS_BUCKET": "winter-data/fashion",
     "RAW_DATA": "fashion_staging",
-    "BASE_DATA": "fashion"
+    "BASE_DATA": "fashion",
+    "LAST_DATE": "2023-11-22"
   }
 }
