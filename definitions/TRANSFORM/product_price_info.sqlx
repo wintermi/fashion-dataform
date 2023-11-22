@@ -1,0 +1,32 @@
+config {
+  type: "table",
+  schema: dataform.projectConfig.vars.BASE_DATA,
+  description: "Contains the current product pricing info for each `product_code` grouping",
+  assertions: {
+    uniqueKey: ["product_code"],
+    nonNull: ["product_code"]
+  },
+  tags: ["TRANSFORM_DATA"]
+}
+
+
+SELECT
+    p.product_code
+  , "USD" AS currencyCode
+  , MAX(IF(rownum = 1, price, NULL)) AS current_price
+  , MIN(price) AS min_price
+  , MAX(price) AS max_price
+  , ROUND(AVG(price), 2) AS avg_price
+  , ARRAY_AGG(DISTINCT price ORDER BY price) AS sale_prices
+FROM ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "product_category" }) } AS p
+  INNER JOIN (SELECT
+                  a.product_code
+                , t.transaction_date
+                , t.price
+                , ROW_NUMBER() OVER (PARTITION BY a.product_code
+                                     ORDER BY t.transaction_date DESC) AS rownum
+              FROM ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "transactions" }) } AS t
+                INNER JOIN ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "articles" }) } AS a
+                  ON t.article_id = a.article_id ) AS ti
+    ON p.product_code = ti.product_code
+GROUP BY 1
