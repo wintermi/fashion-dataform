@@ -25,7 +25,6 @@ CREATE OR REPLACE TABLE ${ self() }
   , availability             STRING
   , uri                      STRING
 )
-OPTIONS(description="The Retail API Product Catalog is a collection of Product objects and associated metadata")
 AS
 SELECT
     pc.product_code AS id
