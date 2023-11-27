@@ -9,21 +9,21 @@ config {
 
 CREATE OR REPLACE TABLE ${ self() }
 (
-    id                       STRING              NOT NULL
-  , type                     STRING
-  , primaryProductId         STRING
-  , categories               ARRAY<STRING>
-  , title                    STRING              NOT NULL
-  , description              STRING
-  , languageCode             STRING
-  , priceInfo                STRUCT
+    id                                 STRING NOT NULL
+  , type                               STRING
+  , primaryProductId                   STRING
+  , categories                         ARRAY<STRING>
+  , title                              STRING NOT NULL
+  , description                        STRING
+  , languageCode                       STRING
+  , priceInfo                          STRUCT
       <
-          currencyCode       STRING
-        , price              FLOAT64
-        , originalPrice      FLOAT64
+          currencyCode                 STRING
+        , price                        FLOAT64
+        , originalPrice                FLOAT64
       >
-  , availability             STRING
-  , uri                      STRING
+  , availability                       STRING
+  , uri                                STRING
 )
 AS
 SELECT

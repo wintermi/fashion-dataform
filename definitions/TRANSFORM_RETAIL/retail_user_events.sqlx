@@ -1,0 +1,67 @@
+config {
+  hasOutput: true,
+  type: "operations",
+  schema: dataform.projectConfig.vars.BASE_DATA,
+  description: "The User Events captures all metadata information Retail API needs to know about how end users interact with customers' website.",
+  tags: ["TRANSFORM_RETAIL_DATA"]
+}
+
+
+CREATE OR REPLACE TABLE ${ self() }
+(
+    eventType                          STRING NOT NULL
+  , visitorId                          STRING NOT NULL
+  , sessionId                          STRING
+  , eventTime                          STRING NOT NULL
+  , productDetails                     ARRAY<STRUCT
+      <
+          product                      STRUCT
+            <
+                id                     STRING NOT NULL
+              , priceInfo              STRUCT
+                  <
+                      currencyCode     STRING NOT NULL
+                    , price            FLOAT64 NOT NULL
+                    , originalPrice    FLOAT64
+                  >
+            > NOT NULL
+        , quantity                     INT64 NOT NULL
+      >>
+  , cartId                             STRING
+  , purchaseTransaction                STRUCT
+      <
+          id                           STRING
+        , revenue                      FLOAT64 NOT NULL
+        , currencyCode                 STRING NOT NULL
+      > NOT NULL
+  , searchQuery                        STRING
+  , pageCategories                     ARRAY<STRING>
+  , userInfo                           STRUCT
+      <
+          userId                       STRING
+        , ipAddress                    STRING
+        , userAgent                    STRING
+        , directUserRequest            BOOLEAN
+      >
+  , uri                                STRING
+  , referrerUri                        STRING
+  , pageViewId                         STRING
+  , entity                             STRING
+)
+AS
+SELECT
+    "add-to-cart" AS eventType
+  , customer_id AS visitorId
+  , NULL AS sessionId
+  , CAST(transaction_date AS STRING) AS eventTime
+  , [] AS productDetails
+  , NULL AS cartId
+  , NULL AS purchaseTransaction
+  , NULL AS searchQuery
+  , [] AS pageCategories
+  , NULL AS userInfo
+  , NULL AS uri
+  , NULL AS referrerUri
+  , NULL AS pageViewId
+  , NULL AS entity
+FROM ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "transactions" }) }

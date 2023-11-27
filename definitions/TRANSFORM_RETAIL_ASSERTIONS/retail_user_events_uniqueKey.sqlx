@@ -1,0 +1,14 @@
+config {
+  type: "assertion",
+  tags: ["TRANSFORM_RETAIL_DATA"]
+}
+
+
+SELECT
+    eventType
+  , visitorId
+  , eventTime
+  , COUNT(*) AS index_row_count
+FROM ${ ref({ schema: dataform.projectConfig.vars.RAWBASE_DATA_DATA, name: "retail_user_events" }) }
+GROUP BY 1, 2, 4
+HAVING index_row_count > 1
