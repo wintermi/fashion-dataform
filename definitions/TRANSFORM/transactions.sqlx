@@ -4,6 +4,7 @@ config {
   description: "Contains the purchases for each customer for each date, as well as additional information. Duplicate rows correspond to multiple purchases of the same item.",
   dependencies: ["stg_transactions_rowConditions"],
   assertions: {
+    uniqueKey: ["transaction_id", "line_item"],
     nonNull: ["transaction_date", "customer_id", "article_id"]
   },
   tags: ["TRANSFORM_DATA"]
@@ -11,21 +12,32 @@ config {
 
 
 SELECT
-    DATE_ADD(CAST(t_dat AS DATE), INTERVAL ltd.days_since DAY) AS transaction_date
-  , customer_id
-  , article_id
-  , ROUND(PARSE_NUMERIC(price) * 708.0236010385, 2) AS price
-  , CAST(sales_channel_id AS INT64) AS sales_channel_id
-FROM ${ ref({ schema: dataform.projectConfig.vars.RAW_DATA, name: "stg_transactions" }) } AS t
+    FORMAT("%s%08d", FORMAT_DATE('%Y%m%d', t.transaction_date), tid.daily_row_num) AS transaction_id
+  , ROW_NUMBER() OVER (PARTITION BY t.transaction_date
+                                  , t.customer_id
+                       ORDER BY t.article_id) AS line_item
+  , t.transaction_date
+  , t.customer_id
+  , t.article_id
+  , t.price
+  , t.sales_channel_id
+FROM (SELECT
+          t_dat
+        , DATE_ADD(CAST(t_dat AS DATE), INTERVAL ltd.days_since DAY) AS transaction_date
+        , customer_id
+        , article_id
+        , ROUND(PARSE_NUMERIC(price) * 708.0236010385, 2) AS price
+        , CAST(sales_channel_id AS INT64) AS sales_channel_id
+      FROM ${ ref({ schema: dataform.projectConfig.vars.RAW_DATA, name: "stg_transactions" }) }
+        CROSS JOIN (SELECT
+                        DATE_DIFF(DATE "${ dataform.projectConfig.vars.LAST_DATE }", MAX(CAST(t_dat AS DATE)), DAY) days_since
+                    FROM ${ ref({ schema: dataform.projectConfig.vars.RAW_DATA, name: "stg_transactions" }) }) AS ltd) AS t
   INNER JOIN (SELECT
                   t_dat
                 , customer_id
                 , ROW_NUMBER() OVER (PARTITION BY t_dat
-                                                , customer_id
-                                     ORDER BY customer_id) AS tra
-              FROM ${ ref({ schema: dataform.projectConfig.vars.RAW_DATA, name: "stg_transactions" }) }) AS tid
+                                     ORDER BY customer_id) AS daily_row_num
+              FROM ${ ref({ schema: dataform.projectConfig.vars.RAW_DATA, name: "stg_transactions" }) }
+              GROUP BY 1, 2) AS tid
     ON  t.t_dat = tid.t_dat
     AND t.customer_id = tid.customer_id
-  CROSS JOIN (SELECT
-                  DATE_DIFF(DATE "${ dataform.projectConfig.vars.LAST_DATE }", MAX(CAST(t_dat AS DATE)), DAY) days_since
-              FROM ${ ref({ schema: dataform.projectConfig.vars.RAW_DATA, name: "stg_transactions" }) }) AS ltd
