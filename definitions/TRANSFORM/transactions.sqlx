@@ -19,6 +19,7 @@ SELECT
   , t.transaction_date
   , t.customer_id
   , t.article_id
+  , 1 AS quantity
   , t.price
   , t.sales_channel_id
 FROM (SELECT
