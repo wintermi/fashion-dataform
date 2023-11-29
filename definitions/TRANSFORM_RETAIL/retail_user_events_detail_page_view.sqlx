@@ -44,7 +44,7 @@ SELECT
     "detail-page-view" AS eventType
   , t.customer_id AS visitorId
   , FORMAT("%s-%s", t.customer_id, t.transaction_id) AS sessionId
-  , FORMAT_DATE('%Y-%m-%dT%H:%M:%E3SZ', TIMESTAMP_ADD(TIMESTAMP_ADD(CAST(transaction_date AS TIMESTAMP), INTERVAL 12 HOUR), INTERVAL ((line_item * 32) - 10) SECOND)) AS eventTime
+  , FORMAT_TIMESTAMP('%Y-%m-%dT%H:%M:%E3SZ', TIMESTAMP_ADD(TIMESTAMP_ADD(CAST(t.transaction_date AS TIMESTAMP), INTERVAL 12 HOUR), INTERVAL ((t.line_item * 32) - 10) SECOND)) AS eventTime
   , [] AS experimentIds
   , CAST(NULL AS STRING) AS attributionToken
   , [STRUCT(STRUCT(t.article_id AS id) AS product

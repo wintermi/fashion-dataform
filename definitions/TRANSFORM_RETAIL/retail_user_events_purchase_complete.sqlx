@@ -64,7 +64,7 @@ SELECT
     "purchase-complete" AS eventType
   , tt.customer_id AS visitorId
   , FORMAT("%s-%s", tt.customer_id, tt.transaction_id) AS sessionId
-  , FORMAT_DATE('%Y-%m-%dT%H:%M:%E3SZ', TIMESTAMP_ADD(TIMESTAMP_ADD(CAST(transaction_date AS TIMESTAMP), INTERVAL 12 HOUR), INTERVAL ((last_line_item * 32) + 124) SECOND)) AS eventTime
+  , FORMAT_TIMESTAMP('%Y-%m-%dT%H:%M:%E3SZ', TIMESTAMP_ADD(TIMESTAMP_ADD(CAST(tt.transaction_date AS TIMESTAMP), INTERVAL 12 HOUR), INTERVAL ((tt.last_line_item * 32) + 124) SECOND)) AS eventTime
   , [] AS experimentIds
   , CAST(NULL AS STRING) AS attributionToken
   , tt.productDetails
