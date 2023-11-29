@@ -19,6 +19,9 @@ RETAIL_TMP_DIR="${RETAIL_TMP_DIR:A}"
 # Import Retail User Events - Add to Cart - From BigQuery
 ################################################################################
 
+# Delete Any Files Previously Staged
+gsutil -q -m rm -f "${RETAIL_IMPORT_GCS_BUCKET}/staging/*"
+
 # Output the Import User Events - Add to Cart - JSON Request Object
 cat <<EOF > "$RETAIL_TMP_DIR/import_user_events_add_to_cart_request.json"
 {

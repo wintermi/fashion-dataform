@@ -19,6 +19,9 @@ RETAIL_TMP_DIR="${RETAIL_TMP_DIR:A}"
 # Import Retail User Events - Purchase Complete - From BigQuery
 ################################################################################
 
+# Delete Any Files Previously Staged
+gsutil -q -m rm -f "${RETAIL_IMPORT_GCS_BUCKET}/staging/*"
+
 # Output the Import User Events - Purchase Complete - JSON Request Object
 cat <<EOF > "$RETAIL_TMP_DIR/import_user_events_purchase_complete_request.json"
 {

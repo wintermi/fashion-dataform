@@ -19,6 +19,9 @@ RETAIL_TMP_DIR="${RETAIL_TMP_DIR:A}"
 # Import Retail User Events - Detail Page View - From BigQuery
 ################################################################################
 
+# Delete Any Files Previously Staged
+gsutil -q -m rm -f "${RETAIL_IMPORT_GCS_BUCKET}/staging/*"
+
 # Output the Import User Events - Detail Page View - JSON Request Object
 cat <<EOF > "$RETAIL_TMP_DIR/import_user_events_detail_page_view_request.json"
 {
