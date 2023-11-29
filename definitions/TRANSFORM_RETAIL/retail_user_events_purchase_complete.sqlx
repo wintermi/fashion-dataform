@@ -1,0 +1,112 @@
+config {
+  hasOutput: true,
+  type: "operations",
+  schema: dataform.projectConfig.vars.BASE_DATA,
+  description: "The Retail User Events capture all metadata information the Retail API needs to know about how end users interact with the website.",
+  dependencies: ["transactions_articleForeignKeyCheck"
+               , "transactions_customerForeignKeyCheck"
+               , "fashion_transactions_assertions_uniqueKey_0"
+               , "fashion_transactions_assertions_rowConditions"
+               , "fashion_articles_assertions_uniqueKey_0"
+               , "fashion_articles_assertions_rowConditions"
+               , "fashion_product_price_info_assertions_uniqueKey_0"
+               , "fashion_product_price_info_assertions_rowConditions"],
+  tags: ["TRANSFORM_RETAIL_DATA"]
+}
+
+
+CREATE OR REPLACE TABLE ${ self() }
+(
+    eventType                          STRING NOT NULL
+  , visitorId                          STRING NOT NULL
+  , sessionId                          STRING
+  , eventTime                          STRING NOT NULL
+  , experimentIds                      ARRAY<STRING>
+  , attributionToken                   STRING
+  , productDetails                     ARRAY<STRUCT
+      <
+          product                      STRUCT
+            <
+                id                     STRING NOT NULL
+              , priceInfo              STRUCT
+                  <
+                      price            FLOAT64 NOT NULL
+                    , originalPrice    FLOAT64
+                    , currencyCode     STRING NOT NULL
+                    , cost             FLOAT64
+                  >
+            > NOT NULL
+        , quantity                     INT64 NOT NULL
+      >>
+  , cartId                             STRING
+  , purchaseTransaction                STRUCT
+      <
+          id                           STRING
+        , revenue                      FLOAT64 NOT NULL
+        , tax                          FLOAT64
+        , cost                         FLOAT64
+        , currencyCode                 STRING NOT NULL
+      > NOT NULL
+  , userInfo                           STRUCT
+      <
+          userId                       STRING
+        , ipAddress                    STRING
+        , userAgent                    STRING
+        , directUserRequest            BOOLEAN
+      >
+  , uri                                STRING
+  , referrerUri                        STRING
+  , pageViewId                         STRING
+  , entity                             STRING
+)
+AS
+SELECT
+    "purchase-complete" AS eventType
+  , tt.customer_id AS visitorId
+  , FORMAT("%s-%s", tt.customer_id, tt.transaction_id) AS sessionId
+  , FORMAT_DATE('%Y-%m-%dT%H:%M:%E3SZ', TIMESTAMP_ADD(TIMESTAMP_ADD(CAST(transaction_date AS TIMESTAMP), INTERVAL 12 HOUR), INTERVAL ((last_line_item * 32) + 124) SECOND)) AS eventTime
+  , [] AS experimentIds
+  , CAST(NULL AS STRING) AS attributionToken
+  , tt.productDetails
+  , tt.transaction_id AS cartId
+  , STRUCT(tt.transaction_id AS id
+         , CAST(tt.total_price AS FLOAT64) AS revenue
+         , CAST(NULL AS FLOAT64) AS tax
+         , CAST(NULL AS FLOAT64) AS cost
+         , "USD" AS currencyCode) AS purchaseTransaction
+  , STRUCT(tt.customer_id AS userId
+         , CAST(NULL AS STRING) AS ipAddress
+         , CAST(NULL AS STRING) AS userAgent
+         , CAST(NULL AS BOOLEAN) AS directUserRequest) AS userInfo
+  , "https://www2.hm.com/en_us/checkout-r" AS uri
+  , "https://www2.hm.com/en_us/cart" AS referrerUri
+  , CAST(NULL AS STRING) AS pageViewId
+  , "hm.com" AS entity
+FROM (SELECT
+          t.transaction_id
+        , t.transaction_date
+        , t.customer_id
+        , ARRAY_AGG(STRUCT(STRUCT(t.article_id AS id
+                                , STRUCT(CAST(t.price AS FLOAT64) AS price
+                                       , CAST(ppi.max_price AS FLOAT64) AS originalPrice
+                                       , ppi.currencyCode
+                                       , CAST(NULL AS FLOAT64) AS cost) AS priceInfo) AS product
+                         , t.quantity)) AS productDetails
+        , SUM(total_price) AS total_price
+        , MAX(max_line_item) AS last_line_item
+      FROM (SELECT
+                transaction_id
+              , transaction_date
+              , customer_id
+              , article_id
+              , price
+              , SUM(quantity) AS quantity
+              , SUM(price) AS total_price
+              , MAX(line_item) AS max_line_item
+            FROM ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "transactions" }) }
+            GROUP BY 1, 2, 3, 4, 5) AS t
+        INNER JOIN ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "articles" }) } AS a
+          ON  t.article_id = a.article_id
+        INNER JOIN ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "product_price_info" }) } AS ppi
+          ON  a.product_code = ppi.product_code
+      GROUP BY 1, 2, 3) AS tt
