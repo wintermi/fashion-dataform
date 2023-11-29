@@ -1,0 +1,58 @@
+config {
+  hasOutput: true,
+  type: "operations",
+  schema: dataform.projectConfig.vars.BASE_DATA,
+  description: "The Retail User Events capture all metadata information the Retail API needs to know about how end users interact with the website.",
+  tags: ["TRANSFORM_RETAIL_DATA"]
+}
+
+
+CREATE OR REPLACE TABLE ${ self() }
+(
+    eventType                          STRING NOT NULL
+  , visitorId                          STRING NOT NULL
+  , sessionId                          STRING
+  , eventTime                          STRING NOT NULL
+  , experimentIds                      ARRAY<STRING>
+  , attributionToken                   STRING
+  , productDetails                     ARRAY<STRUCT
+      <
+          product                      STRUCT
+            <
+                id                     STRING NOT NULL
+            > NOT NULL
+        , quantity                     INT64 NOT NULL
+      >>
+  , cartId                             STRING
+  , userInfo                           STRUCT
+      <
+          userId                       STRING
+        , ipAddress                    STRING
+        , userAgent                    STRING
+        , directUserRequest            BOOLEAN
+      >
+  , uri                                STRING
+  , referrerUri                        STRING
+  , pageViewId                         STRING
+  , entity                             STRING
+)
+AS
+SELECT
+    "add-to-cart" AS eventType
+  , t.customer_id AS visitorId
+  , FORMAT("%s-%s", t.customer_id, t.transaction_id) AS sessionId
+  , FORMAT_DATE('%Y-%m-%dT%H:%M:%E3SZ', TIMESTAMP_ADD(TIMESTAMP_ADD(CAST(transaction_date AS TIMESTAMP), INTERVAL 12 HOUR), INTERVAL line_item * 32 SECOND)) AS eventTime
+  , [] AS experimentIds
+  , CAST(NULL AS STRING) AS attributionToken
+  , [STRUCT(STRUCT(t.article_id AS id) AS product
+          , t.quantity)] AS productDetails
+  , t.transaction_id AS cartId
+  , STRUCT(t.customer_id AS userId
+         , CAST(NULL AS STRING) AS ipAddress
+         , CAST(NULL AS STRING) AS userAgent
+         , CAST(NULL AS BOOLEAN) AS directUserRequest) AS userInfo
+  , FORMAT("https://www2.hm.com/en_us/productpage.%s.html", t.article_id) AS uri
+  , FORMAT("https://www2.hm.com/en_us/productpage.%s.html", t.article_id) AS referrerUri
+  , CAST(NULL AS STRING) AS pageViewId
+  , "hm.com" AS entity
+FROM ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "transactions" }) } AS t
