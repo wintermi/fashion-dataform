@@ -21,8 +21,8 @@ RETAIL_TMP_DIR="${RETAIL_TMP_DIR:A}"
 #     Reconciliation Mode set to FULL - Insert, Update and Deletes
 ################################################################################
 
-# Delete Any Files Previously Staged
-gsutil -q -m rm -f "${RETAIL_IMPORT_GCS_BUCKET}/staging/*"
+# Delete Any Files Previously Staged Product Catalog
+gsutil -q -m rm -rf "${RETAIL_IMPORT_GCS_BUCKET}/staging"
 
 # Output the Import Product Catalog JSON Request Object
 cat <<EOF > "$RETAIL_TMP_DIR/import_product_catalog_request.json"

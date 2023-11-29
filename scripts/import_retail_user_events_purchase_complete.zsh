@@ -19,8 +19,8 @@ RETAIL_TMP_DIR="${RETAIL_TMP_DIR:A}"
 # Import Retail User Events - Purchase Complete - From BigQuery
 ################################################################################
 
-# Delete Any Files Previously Staged
-gsutil -q -m rm -f "${RETAIL_IMPORT_GCS_BUCKET}/staging/*"
+# Delete Any Files Previously Staged Purchase Complete Events
+gsutil -q -m rm -rf "${RETAIL_IMPORT_GCS_BUCKET}/purchase_complete/staging"
 
 # Output the Import User Events - Purchase Complete - JSON Request Object
 cat <<EOF > "$RETAIL_TMP_DIR/import_user_events_purchase_complete_request.json"
@@ -30,12 +30,12 @@ cat <<EOF > "$RETAIL_TMP_DIR/import_user_events_purchase_complete_request.json"
       "projectId": "${RETAIL_PROJECT_ID}",
       "datasetId": "${RETAIL_BQ_DATASET}",
       "tableId": "retail_user_events_purchase_complete",
-      "gcsStagingDir": "${RETAIL_IMPORT_GCS_BUCKET}/staging",
+      "gcsStagingDir": "${RETAIL_IMPORT_GCS_BUCKET}/purchase_complete/staging",
       "dataSchema": "user_event"
     }
   },
   "errorsConfig": {
-    "gcsPrefix": "${RETAIL_IMPORT_GCS_BUCKET}/errors"
+    "gcsPrefix": "${RETAIL_IMPORT_GCS_BUCKET}/purchase_complete/errors"
   }
 }
 EOF

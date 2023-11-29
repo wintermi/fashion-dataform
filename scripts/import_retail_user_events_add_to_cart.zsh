@@ -19,8 +19,8 @@ RETAIL_TMP_DIR="${RETAIL_TMP_DIR:A}"
 # Import Retail User Events - Add to Cart - From BigQuery
 ################################################################################
 
-# Delete Any Files Previously Staged
-gsutil -q -m rm -f "${RETAIL_IMPORT_GCS_BUCKET}/staging/*"
+# Delete Any Files Previously Staged Add To Cart Events
+gsutil -q -m rm -rf "${RETAIL_IMPORT_GCS_BUCKET}/add_to_cart/staging"
 
 # Output the Import User Events - Add to Cart - JSON Request Object
 cat <<EOF > "$RETAIL_TMP_DIR/import_user_events_add_to_cart_request.json"
@@ -30,12 +30,12 @@ cat <<EOF > "$RETAIL_TMP_DIR/import_user_events_add_to_cart_request.json"
       "projectId": "${RETAIL_PROJECT_ID}",
       "datasetId": "${RETAIL_BQ_DATASET}",
       "tableId": "retail_user_events_add_to_cart",
-      "gcsStagingDir": "${RETAIL_IMPORT_GCS_BUCKET}/staging",
+      "gcsStagingDir": "${RETAIL_IMPORT_GCS_BUCKET}/add_to_cart/staging",
       "dataSchema": "user_event"
     }
   },
   "errorsConfig": {
-    "gcsPrefix": "${RETAIL_IMPORT_GCS_BUCKET}/errors"
+    "gcsPrefix": "${RETAIL_IMPORT_GCS_BUCKET}/add_to_cart/errors"
   }
 }
 EOF
