@@ -1,0 +1,21 @@
+config {
+  hasOutput: true,
+  type: "operations",
+  schema: dataform.projectConfig.vars.RAW_DATA,
+  tags: ["LOAD_DATA"]
+}
+
+
+LOAD DATA OVERWRITE ${ self() }
+(
+    product_json                       STRING    NOT NULL
+)
+FROM FILES (
+  format = "CSV",
+  field_delimiter = ",",
+  skip_leading_rows = 0,
+  allow_jagged_rows = true,
+  quote = "\"",
+  null_marker = "",
+  uris = ["gs://${ dataform.projectConfig.vars.LOAD_GCS_BUCKET }/hmProductLinkedData.csv"]
+);

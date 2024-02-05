@@ -1,0 +1,24 @@
+config {
+  type: "table",
+  schema: dataform.projectConfig.vars.BASE_DATA,
+  description: "Contains the Product JSON-LD extracted in scalar form",
+  dependencies: ["stg_product_uniqueKey"],
+  assertions: {
+    uniqueKey: ["sku"],
+    nonNull: ["sku"]
+  },
+  tags: ["TRANSFORM_DATA"]
+}
+
+
+SELECT
+    JSON_VALUE(PARSE_JSON(product_json), '$.sku') AS sku
+  , REPLACE(REPLACE(JSON_VALUE(PARSE_JSON(product_json), '$.name'), '&amp;', '&'), '&#x27;', "'") AS name
+  , REPLACE(REPLACE(JSON_VALUE(PARSE_JSON(product_json), '$.description'), '&amp;', '&'), '&#x27;', "'") AS description
+  , JSON_VALUE(PARSE_JSON(product_json), '$.offers[0].url') AS url
+  , CONCAT('https:', JSON_VALUE(PARSE_JSON(product_json), '$.image')) AS image
+  , ROUND(PARSE_NUMERIC(JSON_VALUE(PARSE_JSON(product_json), '$.offers[0].price')), 2) AS price
+  , JSON_VALUE(PARSE_JSON(product_json), '$.offers[0].priceCurrency') AS price_currency
+  , JSON_VALUE(PARSE_JSON(product_json), '$.offers[0].availability') AS stock_availability
+  , JSON_VALUE(PARSE_JSON(product_json), '$.itemCondition') AS item_condition
+FROM ${ ref({ schema: dataform.projectConfig.vars.RAW_DATA, name: "stg_product" }) }
