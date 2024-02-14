@@ -4,12 +4,12 @@
 # Environment Variables - Retail API Project
 ################################################################################
 
-local RETAIL_PROJECT_ID="winter-dataform"
-local RETAIL_PROJECT_NUMBER="374294533986"
+local RETAIL_PROJECT_ID="retail-search-demo-413002"
+local RETAIL_PROJECT_NUMBER="355407052573"
 local RETAIL_LOCATION="global"
 local RETAIL_CATALOG="default_catalog"
 local RETAIL_BRANCH="0"
-local RETAIL_IMPORT_GCS_BUCKET="gs://winter-retail/product_catalog"
+local RETAIL_IMPORT_GCS_BUCKET="gs://fashion-retail-demo/product_catalog"
 local RETAIL_BQ_DATASET="fashion"
 
 local RETAIL_TMP_DIR="${0:A:h}/../tmp"

@@ -2,12 +2,12 @@
   "defaultSchema": "fashion",
   "assertionSchema": "DF_ASSERTIONS",
   "warehouse": "bigquery",
-  "defaultDatabase": "winter-dataform",
+  "defaultDatabase": "retail-search-demo-413002",
   "defaultLocation": "australia-southeast1",
   "vars": {
-    "LOAD_GCS_BUCKET": "winter-data/fashion",
+    "LOAD_GCS_BUCKET": "fashion-retail-demo/fashion",
     "RAW_DATA": "fashion_staging",
     "BASE_DATA": "fashion",
-    "LAST_DATE": "2023-11-29"
+    "LAST_DATE": "2024-02-10"
   }
 }
