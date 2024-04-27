@@ -1,6 +1,6 @@
 config {
   type: "table",
-  schema: dataform.projectConfig.vars.BASE_DATA,
+  schema: dataform.projectConfig.vars.TARGET_DATA,
   description: "Contains the current product pricing info for each `product_code` grouping",
   dependencies: ["transactions_articleForeignKeyCheck"
                , "transactions_customerForeignKeyCheck"
@@ -26,15 +26,15 @@ SELECT
   , MAX(price) AS max_price
   , ROUND(AVG(price), 2) AS avg_price
   , ARRAY_AGG(DISTINCT price ORDER BY price) AS sale_prices
-FROM ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "product_category" }) } AS p
+FROM ${ ref({ schema: dataform.projectConfig.vars.TARGET_DATA, name: "product_category" }) } AS p
   INNER JOIN (SELECT
                   a.product_code
                 , t.transaction_date
                 , t.price
                 , ROW_NUMBER() OVER (PARTITION BY a.product_code
                                      ORDER BY t.transaction_date DESC) AS rownum
-              FROM ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "transactions" }) } AS t
-                INNER JOIN ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "articles" }) } AS a
+              FROM ${ ref({ schema: dataform.projectConfig.vars.TARGET_DATA, name: "transactions" }) } AS t
+                INNER JOIN ${ ref({ schema: dataform.projectConfig.vars.TARGET_DATA, name: "articles" }) } AS a
                   ON t.article_id = a.article_id ) AS ti
     ON p.product_code = ti.product_code
 GROUP BY 1

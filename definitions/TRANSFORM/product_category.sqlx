@@ -1,6 +1,6 @@
 config {
   type: "table",
-  schema: dataform.projectConfig.vars.BASE_DATA,
+  schema: dataform.projectConfig.vars.TARGET_DATA,
   description: "Contains a conformed product category hierarchy for each `product_code` grouping",
   dependencies: ["stg_articles_uniqueKey"
                , "stg_articles_rowConditions"],

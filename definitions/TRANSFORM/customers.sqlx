@@ -1,6 +1,6 @@
 config {
   type: "table",
-  schema: dataform.projectConfig.vars.BASE_DATA,
+  schema: dataform.projectConfig.vars.TARGET_DATA,
   description: "Contains metadata for each `customer_id` in the dataset",
   dependencies: ["stg_customers_uniqueKey"
                , "stg_customers_rowConditions"],

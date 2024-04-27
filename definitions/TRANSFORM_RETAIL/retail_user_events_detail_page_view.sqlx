@@ -1,7 +1,7 @@
 config {
   hasOutput: true,
   type: "operations",
-  schema: dataform.projectConfig.vars.BASE_DATA,
+  schema: dataform.projectConfig.vars.TARGET_DATA,
   description: "The Retail User Events capture all metadata information the Retail API needs to know about how end users interact with the website.",
   dependencies: ["transactions_articleForeignKeyCheck"
                , "transactions_customerForeignKeyCheck"
@@ -57,4 +57,4 @@ SELECT
   , FORMAT("https://www2.hm.com/en_us/productpage.%s.html", t.article_id) AS referrerUri
   , CAST(NULL AS STRING) AS pageViewId
   , "hm.com" AS entity
-FROM ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "transactions" }) } AS t
+FROM ${ ref({ schema: dataform.projectConfig.vars.TARGET_DATA, name: "transactions" }) } AS t

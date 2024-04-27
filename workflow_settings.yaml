@@ -1,0 +1,10 @@
+dataformCoreVersion: 3.0.0-beta.4
+defaultProject: winter-dataform
+defaultLocation: australia-southeast1
+defaultDataset: fashion
+defaultAssertionDataset: fashion_assertions
+vars:
+    LOAD_GCS_BUCKET: winter-data/fashion
+    RAW_DATA: fashion_staging
+    TARGET_DATA: fashion
+    LAST_DATE: "2023-11-29"

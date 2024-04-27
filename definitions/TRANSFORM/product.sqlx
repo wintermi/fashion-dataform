@@ -1,6 +1,6 @@
 config {
   type: "table",
-  schema: dataform.projectConfig.vars.BASE_DATA,
+  schema: dataform.projectConfig.vars.TARGET_DATA,
   description: "Contains the Product JSON-LD extracted in scalar form",
   dependencies: ["stg_product_uniqueKey"],
   assertions: {

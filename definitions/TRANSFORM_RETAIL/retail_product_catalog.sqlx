@@ -1,7 +1,7 @@
 config {
   hasOutput: true,
   type: "operations",
-  schema: dataform.projectConfig.vars.BASE_DATA,
+  schema: dataform.projectConfig.vars.TARGET_DATA,
   description: "The Retail API Product Catalog is a collection of Product objects and associated metadata",
   dependencies: ["fashion_articles_assertions_uniqueKey_0"
                , "fashion_articles_assertions_rowConditions"
@@ -43,8 +43,8 @@ SELECT
   , IF(ppi.product_code IS NULL, NULL, STRUCT(ppi.currencyCode, ppi.current_price AS price, ppi.max_price as originalPrice)) AS priceInfo
   , IF(ppi.product_code IS NULL, "OUT_OF_STOCK", "IN_STOCK") AS availability
   , IF(ppi.product_code IS NULL, NULL, FORMAT("https://www2.hm.com/en_us/search-results.html?q=%s", pc.product_code)) AS uri
-FROM ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "product_category" }) } AS pc
-  LEFT OUTER JOIN ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "product_price_info" }) } AS ppi
+FROM ${ ref({ schema: dataform.projectConfig.vars.TARGET_DATA, name: "product_category" }) } AS pc
+  LEFT OUTER JOIN ${ ref({ schema: dataform.projectConfig.vars.TARGET_DATA, name: "product_price_info" }) } AS ppi
     ON  pc.product_code = ppi.product_code
 UNION ALL
 SELECT
@@ -58,8 +58,8 @@ SELECT
   , IF(ppi.product_code IS NULL, NULL, STRUCT(ppi.currencyCode, ppi.current_price AS price, ppi.max_price as originalPrice)) AS priceInfo
   , IF(ppi.product_code IS NULL, "OUT_OF_STOCK", "IN_STOCK") AS availability
   , IF(ppi.product_code IS NULL, NULL, FORMAT("https://www2.hm.com/en_us/productpage.%s.html", a.article_id)) AS uri
-FROM ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "articles" }) } AS a
-  INNER JOIN ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "product_category" }) } AS pc
+FROM ${ ref({ schema: dataform.projectConfig.vars.TARGET_DATA, name: "articles" }) } AS a
+  INNER JOIN ${ ref({ schema: dataform.projectConfig.vars.TARGET_DATA, name: "product_category" }) } AS pc
     ON  a.product_code = pc.product_code
-  LEFT OUTER JOIN ${ ref({ schema: dataform.projectConfig.vars.BASE_DATA, name: "product_price_info" }) } AS ppi
+  LEFT OUTER JOIN ${ ref({ schema: dataform.projectConfig.vars.TARGET_DATA, name: "product_price_info" }) } AS ppi
     ON  a.product_code = ppi.product_code
