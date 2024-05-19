@@ -2,14 +2,7 @@ config {
   type: "table",
   schema: dataform.projectConfig.vars.TARGET_DATA,
   description: "Contains the current product pricing info for each `product_code` grouping",
-  dependencies: ["transactions_articleForeignKeyCheck"
-               , "transactions_customerForeignKeyCheck"
-               , "fashion_transactions_assertions_uniqueKey_0"
-               , "fashion_transactions_assertions_rowConditions"
-               , "fashion_articles_assertions_uniqueKey_0"
-               , "fashion_articles_assertions_rowConditions"
-               , "fashion_product_category_assertions_uniqueKey_0"
-               , "fashion_product_category_assertions_rowConditions"],
+  dependOnDependencyAssertions: true,
   assertions: {
     uniqueKey: ["product_code"],
     nonNull: ["product_code"]

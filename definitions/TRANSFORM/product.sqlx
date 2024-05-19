@@ -2,7 +2,7 @@ config {
   type: "table",
   schema: dataform.projectConfig.vars.TARGET_DATA,
   description: "Contains the Product JSON-LD extracted in scalar form",
-  dependencies: ["stg_product_uniqueKey"],
+  dependOnDependencyAssertions: true,
   assertions: {
     uniqueKey: ["sku"],
     nonNull: ["sku"]

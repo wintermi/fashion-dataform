@@ -3,12 +3,7 @@ config {
   type: "operations",
   schema: dataform.projectConfig.vars.TARGET_DATA,
   description: "The Retail API Product Catalog is a collection of Product objects and associated metadata",
-  dependencies: ["fashion_articles_assertions_uniqueKey_0"
-               , "fashion_articles_assertions_rowConditions"
-               , "fashion_product_category_assertions_uniqueKey_0"
-               , "fashion_product_category_assertions_rowConditions"
-               , "fashion_product_price_info_assertions_uniqueKey_0"
-               , "fashion_product_price_info_assertions_rowConditions"],
+  dependOnDependencyAssertions: true,
   tags: ["TRANSFORM_RETAIL_DATA"]
 }
 

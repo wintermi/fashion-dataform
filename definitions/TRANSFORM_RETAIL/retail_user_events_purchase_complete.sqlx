@@ -3,14 +3,7 @@ config {
   type: "operations",
   schema: dataform.projectConfig.vars.TARGET_DATA,
   description: "The Retail User Events capture all metadata information the Retail API needs to know about how end users interact with the website.",
-  dependencies: ["transactions_articleForeignKeyCheck"
-               , "transactions_customerForeignKeyCheck"
-               , "fashion_transactions_assertions_uniqueKey_0"
-               , "fashion_transactions_assertions_rowConditions"
-               , "fashion_articles_assertions_uniqueKey_0"
-               , "fashion_articles_assertions_rowConditions"
-               , "fashion_product_price_info_assertions_uniqueKey_0"
-               , "fashion_product_price_info_assertions_rowConditions"],
+  dependOnDependencyAssertions: true,
   tags: ["TRANSFORM_RETAIL_DATA"]
 }
 
