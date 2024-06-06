@@ -13,7 +13,18 @@ config {
   tags: ["TRANSFORM_DATA"]
 }
 
-
+CREATE OR REPLACE TABLE ${ self() }
+(
+    transaction_id STRING NOT NULL,
+    line_item INT64,
+    transaction_date DATE,
+    customer_id STRING,
+    article_id STRING,
+    quantity INT64,
+    price NUMERIC,
+    sales_channel_id INT64
+)
+AS
 SELECT
     FORMAT("%s%08d", FORMAT_DATE('%Y%m%d', t.transaction_date), tid.daily_row_num) AS transaction_id
   , ROW_NUMBER() OVER (PARTITION BY t.transaction_date

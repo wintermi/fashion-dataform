@@ -10,7 +10,19 @@ config {
   tags: ["TRANSFORM_DATA"]
 }
 
-
+CREATE OR REPLACE TABLE ${ self() }
+(
+    sku STRING,
+    name STRING,
+    description STRING,
+    url STRING,
+    image STRING,
+    price NUMERIC,
+    price_currency STRING,
+    stock_availability STRING,
+    item_condition STRING
+)
+AS
 SELECT
     JSON_VALUE(PARSE_JSON(product_json), '$.sku') AS sku
   , REPLACE(REPLACE(JSON_VALUE(PARSE_JSON(product_json), '$.name'), '&amp;', '&'), '&#x27;', "'") AS name
