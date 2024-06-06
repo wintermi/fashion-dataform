@@ -10,7 +10,17 @@ config {
   tags: ["TRANSFORM_DATA"]
 }
 
-
+CREATE OR REPLACE TABLE ${ self() }
+(
+    product_code STRING,
+    currencyCode STRING,
+    current_price NUMERIC,
+    min_price NUMERIC,
+    max_price NUMERIC,
+    avg_price NUMERIC,
+    sale_prices ARRAY<NUMERIC>
+)
+AS
 SELECT
     p.product_code
   , "USD" AS currencyCode

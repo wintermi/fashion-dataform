@@ -10,7 +10,20 @@ config {
   tags: ["TRANSFORM_DATA"]
 }
 
-
+CREATE OR REPLACE TABLE ${ self() }
+(
+    product_code STRING,
+    prod_name STRING,
+    product_group_name STRING,
+    product_type_name STRING,
+    index_group_name STRING,
+    index_name STRING,
+    section_name STRING,
+    garment_group_name STRING,
+    product_category STRING,
+    detail_desc STRING
+)
+AS
 SELECT
     product_code
   , prod_name

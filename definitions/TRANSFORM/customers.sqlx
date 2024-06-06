@@ -10,7 +10,17 @@ config {
   tags: ["TRANSFORM_DATA"]
 }
 
-
+CREATE OR REPLACE TABLE ${ self() }
+(
+    customer_id STRING NOT NULL,
+    FN BOOL,
+    Active BOOL,
+    club_member_status STRING,
+    fashion_news_frequency STRING,
+    age INT64,
+    postal_code STRING
+)
+AS
 SELECT
     customer_id
   , IF(FN IS NULL, NULL, IF(FN="1.0", True, False)) AS FN
