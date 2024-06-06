@@ -10,7 +10,35 @@ config {
   tags: ["TRANSFORM_DATA"]
 }
 
-
+CREATE OR REPLACE TABLE ${ self() }
+(
+    article_id STRING
+    product_code STRING,
+    prod_name STRING,
+    product_type_no INT64,
+    product_group_name STRING,
+    product_type_name STRING,
+    graphical_appearance_no INT64,
+    graphical_appearance_name STRING,
+    colour_group_code STRING,
+    colour_group_name STRING,
+    perceived_colour_value_id INT64,
+    perceived_colour_value_name STRING,
+    perceived_colour_master_id INT64,
+    perceived_colour_master_name STRING,
+    department_no INT64,
+    department_name STRING,
+    index_group_no INT64,
+    index_group_name STRING,
+    index_code STRING,
+    index_name STRING,
+    section_no INT64,
+    section_name STRING,
+    garment_group_no INT64,
+    garment_group_name STRING,
+    detail_desc STRING
+)
+AS
 SELECT
     article_id
   , product_code
