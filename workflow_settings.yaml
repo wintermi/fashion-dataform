@@ -1,10 +1,10 @@
 dataformCoreVersion: 3.0.0-beta.6
-defaultProject: winter-dataform
-defaultLocation: australia-southeast1
-defaultDataset: fashion
-defaultAssertionDataset: fashion_assertions
+defaultProject: au-dttl-officeworks-poc
+defaultLocation: australia-southeast2
+defaultDataset: al_rs_hm_product_catalogue
+defaultAssertionDataset: al_rs_hm_product_catalogue_assertions
 vars:
-  LOAD_GCS_BUCKET: winter-data/fashion
-  RAW_DATA: fashion_staging
-  TARGET_DATA: fashion
+  LOAD_GCS_BUCKET: al_rs_hm_product_catalogue/winter-data
+  RAW_DATA: al_rs_hm_product_catalogue_staging
+  TARGET_DATA: al_rs_hm_product_catalogue
   LAST_DATE: "2023-11-29"
